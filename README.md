@@ -38,6 +38,8 @@ everything (Don't give a shit about the ignored files)
 
 ### Search Query Syntax
 
+`:h su` for more information
+
 ```
 /<substitute-pattern>/<substitute-flags> <files>
 /<substitute-pattern>/<substitute-flags>
