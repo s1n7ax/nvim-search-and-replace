@@ -87,17 +87,6 @@ console.log(\1)
 ## Configurations
 
 ```lua
-require 'nvim-search-and-replace'.setup({
-    ignore = {'**/node_modules/**', '**/.git/**', '**/build/**'},
-    update_changes = true,
-    replace_keymap = '<leader>gs',
-    replace_all_keymap = '<leader>ga',
-})
-```
-
-## Configurations
-
-```lua
 require('nvim-search-and-replace')setup{
     -- file patters to ignore
     ignore = {'**/node_modules/**', '**/.git/**',  '**/.gitignore', '**/.gitmodules','build/**'},
