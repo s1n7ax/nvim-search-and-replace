@@ -15,16 +15,16 @@ use {
 
 ## Keymaps
 
-<key><leader></key> + <key>g</key> + <key>r</key> = Search and replace (Respects
+<kbd><leader></kbd> + <kbd>g</kbd> + <kbd>r</kbd> = Search and replace (Respects
 ignored files)
 
-<key><leader></key> + <key>g</key> + <key>R</key> = Search and replace
+<kbd><leader></kbd> + <kbd>g</kbd> + <kbd>R</kbd> = Search and replace
 everything (Don't give a shit about the ignored files)
 
-<key><leader></key> + <key>g</key> + <key>u</key> = Search, replace and save (Respects
+<kbd><leader></kbd> + <kbd>g</kbd> + <kbd>u</kbd> = Search, replace and save (Respects
 ignored files)
 
-<key><leader></key> + <key>g</key> + <key>U</key> = Search, replace and save
+<kbd><leader></kbd> + <kbd>g</kbd> + <kbd>U</kbd> = Search, replace and save
 everything (Don't give a shit about the ignored files)
 
 ## Commands
