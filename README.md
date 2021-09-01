@@ -6,7 +6,7 @@ Absolutly minimal plugin to search and replace multiple files in current working
 
 ```lua
 use {
-    'nvim-search-and-replace',
+    's1n7ax/nvim-search-and-replace',
     config = function() require'nvim-search-and-replace'.setup() end,
 }
 ```
