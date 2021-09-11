@@ -55,19 +55,23 @@ function M.setup(opts)
 
     V.cmd('command! SReplace lua require("nvim-search-and-replace").replace()')
     V.cmd(
-      'command! SReplaceAll lua require("nvim-search-and-replace").replace_all()')
+        'command! SReplaceAll lua require("nvim-search-and-replace").replace_all()'
+    )
 
     V.cmd(
-      'command! SReplaceAndSave lua require("nvim-search-and-replace").replace({update_changes = true})')
+        'command! SReplaceAndSave lua require("nvim-search-and-replace").replace({update_changes = true})'
+    )
 
     V.cmd(
-      'command! SReplaceAllAndSave lua require("nvim-search-and-replace").replace_all({update_changes = true})')
+        'command! SReplaceAllAndSave lua require("nvim-search-and-replace").replace_all({update_changes = true})'
+    )
 
     set_n_keymap(config.replace_keymap, ':SReplace<CR>', {})
     set_n_keymap(config.replace_all_keymap, ':SReplaceAll<CR>', {})
     set_n_keymap(config.replace_and_save_keymap, ':SReplaceAndSave<CR>', {})
-    set_n_keymap(config.replace_all_and_save_keymap, ':SReplaceAllAndSave<CR>',
-                 {})
+    set_n_keymap(
+        config.replace_all_and_save_keymap, ':SReplaceAllAndSave<CR>', {}
+    )
 end
 
 -- Search and replace all the files in the current directory
@@ -120,20 +124,30 @@ function M.replace(opts)
         V.opt.wildignore:append(ignore_pattern)
     end
 
-    local status, err = pcall(function()
-        CMD(VIMGREP_SEARCH_PATTERN:format(search_pattern, files))
-    end)
+    local status, err = pcall(
+                            function()
+            CMD(VIMGREP_SEARCH_PATTERN:format(search_pattern, files))
+        end
+                        )
 
     if status then
-        status, err = pcall(function()
-            if opts.update_changes then
-                CMD(FILE_SEARCH_UPDATE_PATTERN:format(search_pattern,
-                                                      replace_pattern, options))
-            else
-                CMD(FILE_SEARCH_PATTERN:format(search_pattern, replace_pattern,
-                                               options))
+        pcall(
+            function()
+                if opts.update_changes then
+                    CMD(
+                        FILE_SEARCH_UPDATE_PATTERN:format(
+                            search_pattern, replace_pattern, options
+                        )
+                    )
+                else
+                    CMD(
+                        FILE_SEARCH_PATTERN:format(
+                            search_pattern, replace_pattern, options
+                        )
+                    )
+                end
             end
-        end)
+        )
     end
 
     V.o.wildignore = wildignore
