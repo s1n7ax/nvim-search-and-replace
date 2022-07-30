@@ -1,8 +1,8 @@
-local config = require 'nvim-search-and-replace.config'
-local util = require 'nvim-search-and-replace.util'
+local config = require('nvim-search-and-replace.config')
+local util = require('nvim-search-and-replace.util')
 
 local V = vim
-local Fn = V.fn
+local Ui = V.ui
 local CMD = V.cmd
 local API = V.api
 
@@ -29,7 +29,9 @@ local function set_n_keymap(keymap, action, opts)
 end
 
 function string.is_empty(str)
-    if str == nil then return true end
+    if str == nil then
+        return true
+    end
 
     str = str:gsub('%s*', '')
 
@@ -38,7 +40,9 @@ end
 
 local function get_maching_results(str)
     for _, pattern in ipairs(patterns) do
-        if str:match(pattern) then return str:match(pattern) end
+        if str:match(pattern) then
+            return str:match(pattern)
+        end
     end
 end
 
@@ -51,27 +55,21 @@ end
 --     search_all_keymap = '<leader>ga'
 -- })
 function M.setup(opts)
-    if opts then config = util.merge_tables(config, opts) end
+    if opts then
+        config = util.merge_tables(config, opts)
+    end
 
     V.cmd('command! SReplace lua require("nvim-search-and-replace").replace()')
-    V.cmd(
-        'command! SReplaceAll lua require("nvim-search-and-replace").replace_all()'
-    )
+    V.cmd('command! SReplaceAll lua require("nvim-search-and-replace").replace_all()')
 
-    V.cmd(
-        'command! SReplaceAndSave lua require("nvim-search-and-replace").replace({update_changes = true})'
-    )
+    V.cmd('command! SReplaceAndSave lua require("nvim-search-and-replace").replace({update_changes = true})')
 
-    V.cmd(
-        'command! SReplaceAllAndSave lua require("nvim-search-and-replace").replace_all({update_changes = true})'
-    )
+    V.cmd('command! SReplaceAllAndSave lua require("nvim-search-and-replace").replace_all({update_changes = true})')
 
     set_n_keymap(config.replace_keymap, ':SReplace<CR>', {})
     set_n_keymap(config.replace_all_keymap, ':SReplaceAll<CR>', {})
     set_n_keymap(config.replace_and_save_keymap, ':SReplaceAndSave<CR>', {})
-    set_n_keymap(
-        config.replace_all_and_save_keymap, ':SReplaceAllAndSave<CR>', {}
-    )
+    set_n_keymap(config.replace_all_and_save_keymap, ':SReplaceAllAndSave<CR>', {})
 end
 
 -- Search and replace all the files in the current directory
@@ -100,59 +98,53 @@ function M.replace(opts)
     opts.ignore = opts.ignore or config.ignore
 
     -- get the search query
-    local search_query = Fn.input('Search Query: ')
-
-    if (string.is_empty(search_query)) then return end
-
-    local search_pattern, options, files = get_maching_results(search_query)
-    options = options or ''
-    files = files or '**/*'
-
-    if search_pattern == nil or string.is_empty(search_pattern) then
-        error('Invalid search query')
-        return
-    end
-
-    local replace_pattern = Fn.input('Replace with: ')
-
-    if string.is_empty(replace_pattern) then return end
-
-    local wildignore = V.o.wildignore
-    V.o.wildignore = ''
-
-    for _, ignore_pattern in ipairs(opts.ignore) do
-        V.opt.wildignore:append(ignore_pattern)
-    end
-
-    local status, err = pcall(
-                            function()
-            CMD(VIMGREP_SEARCH_PATTERN:format(search_pattern, files))
+    Ui.input({ prompt = 'Search Query: ' }, function(search_query)
+        if string.is_empty(search_query) then
+            return
         end
-                        )
 
-    if status then
-        pcall(
-            function()
-                if opts.update_changes then
-                    CMD(
-                        FILE_SEARCH_UPDATE_PATTERN:format(
-                            search_pattern, replace_pattern, options
-                        )
-                    )
-                else
-                    CMD(
-                        FILE_SEARCH_PATTERN:format(
-                            search_pattern, replace_pattern, options
-                        )
-                    )
-                end
+        local search_pattern, options, files = get_maching_results(search_query)
+        options = options or ''
+        files = files or '**/*'
+
+        if search_pattern == nil or string.is_empty(search_pattern) then
+            error('Invalid search query')
+            return
+        end
+
+        Ui.input({ prompt = 'Replace with: ' }, function(replace_pattern)
+            if string.is_empty(replace_pattern) then
+                return
             end
-        )
-    end
 
-    V.o.wildignore = wildignore
+            local wildignore = V.o.wildignore
+            V.o.wildignore = ''
 
-    if not status then error(err) end
+            for _, ignore_pattern in ipairs(opts.ignore) do
+                V.opt.wildignore:append(ignore_pattern)
+            end
+
+            local status, err = pcall(function()
+                CMD(VIMGREP_SEARCH_PATTERN:format(search_pattern, files))
+            end)
+
+            if status then
+                pcall(function()
+                    if opts.update_changes then
+                        CMD(FILE_SEARCH_UPDATE_PATTERN:format(search_pattern, replace_pattern, options))
+                    else
+                        CMD(FILE_SEARCH_PATTERN:format(search_pattern, replace_pattern, options))
+                    end
+                end)
+            end
+
+            V.o.wildignore = wildignore
+
+            if not status then
+                error(err)
+            end
+        end)
+    end)
 end
 
 return M
